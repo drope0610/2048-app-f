@@ -1,0 +1,11 @@
+name: Hello Pipelines' World
+
+on:
+  workflow_dispatch:
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hello pipelines' world
+        run: echo "Hello pipelines' world !"
