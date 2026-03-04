@@ -1,0 +1,31 @@
+Rapport Technique : Automatisation de l'Intégration Continue (Lab 02)
+1. Méthodologie et Mise en œuvre (Le "Comment")
+Le script a été réalisé en Bash pour sa portabilité et sa simplicité d'exécution dans les environnements Linux/Unix. Il suit une structure séquentielle stricte :
+
+• Initialisation : Utilisation de `set -e` pour garantir que le script s'interrompt immédiatement au premier échec.
+
+• Gestion des dépendances : Utilisation de `pnpm install` suivie de `pnpm nuxt prepare`.
+
+• Validation statique : Exécution de `pnpm nuxt typecheck` pour le typage et `pnpm eslint .` pour la qualité du code.
+
+• Vérification dynamique : Lancement des tests avec `pnpm vitest run`.
+
+• Finalisation : Construction du package de production avec `pnpm nuxt build`.
+
+2. Justifications des choix techniques (Le "Pourquoi")
+• Le choix de `pnpm` : Contrairement à npm, pnpm utilise un magasin de contenu adressable qui évite de retélécharger les mêmes dépendances, rendant le pipeline beaucoup plus rapide.
+
+• L'étape `nuxt prepare` : Indispensable dans un projet Nuxt 3. Elle génère les fichiers de types nécessaires aux "auto-imports" (comme `computed` ou `useState`). Sans cela, le contrôle de type échouerait systématiquement en CI.
+
+• L'ordre des étapes : Nous avons placé le `typecheck` et le `lint` avant les tests. Pourquoi ? Parce qu'il est inutile de consommer du temps et des ressources CPU pour faire tourner des tests si le code source contient des erreurs de syntaxe ou de typage.
+
+• Sécurité et Rapports : L'inclusion de `pnpm audit` et `pdated` exportés en JSON dans un dossier `reports/` permet de garder une trace historique des vulnérabilités sans bloquer le build de manière bloquante si nécessaire.
+
+3. Notions apprises durant le TP
+• Culture DevOps : Compréhension du cycle de vie d'un code, du commit local jusqu'au build de production.
+
+• Configuration TypeScript avancée : Apprentissage de la gestion des `tsconfig.json` et de l'inclusion spécifique des fichiers `.vue` pour les tests unitaires.
+
+• Débogage d'environnement : Résolution des erreurs de définitions de types (ex: `@types/node`) propres aux outils de test comme Vitest.
+
+• Bonnes pratiques Shell : Importance du "Fail-Fast" et de la gestion propre des répertoires de travail.
